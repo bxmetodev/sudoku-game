@@ -1,15 +1,17 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sudoku Game</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+  <button id="theme-toggle" title="Switch theme (light/dark)" aria-label="Switch theme">🌙</button>
+  <main>
   <h1>Sudoku Game</h1>
-  <div id="sudoku-board"></div>
-  <div class="difficulty">
+  <div id="sudoku-board" aria-label="Sudoku board"></div>
+  <div class="difficulty" role="group" aria-label="Select difficulty">
     <span class="difficulty-label">Difficulty:</span>
     <button class="diff-btn active" data-clues="46">Easy</button>
     <button class="diff-btn" data-clues="32">Medium</button>
@@ -19,15 +21,17 @@
     <button id="new-game">New Game</button>
     <button id="hint">Hint</button>
     <button id="check-solution">Check Solution</button>
+    <label for="player-name" class="sr-only">Player name</label>
     <input id="player-name" type="text" maxlength="20" placeholder="Your name">
-    <span id="timer" class="timer">Time: 00:00</span>
-    <span id="message"></span>
+    <span id="timer" class="timer" aria-live="polite">Time: 00:00</span>
+    <span id="message" role="status" aria-live="polite"></span>
   </div>
 
   <section class="scoreboard">
     <h2>Top 10 Fastest Times</h2>
     <ol id="times-list"></ol>
   </section>
+  </main>
   <script src="/static/main.js"></script>
 </body>
 </html>

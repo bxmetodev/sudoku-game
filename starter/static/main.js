@@ -63,6 +63,7 @@ function updateImmediateValidation() {
     const inp = inputs[idx];
     if (!inp.disabled) {
       inp.classList.remove('invalid-move');
+      inp.setAttribute('aria-invalid', 'false');
     }
   }
 
@@ -74,6 +75,7 @@ function updateImmediateValidation() {
     const col = idx % SIZE;
     if (hasConflict(inputs, row, col, inp.value)) {
       inp.classList.add('invalid-move');
+      inp.setAttribute('aria-invalid', 'true');
       conflictCount += 1;
     }
   }
@@ -87,12 +89,26 @@ function updateImmediateValidation() {
   }
 }
 
+function focusCell(row, col) {
+  if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return;
+  const boardDiv = document.getElementById('sudoku-board');
+  const inputs = boardDiv.getElementsByTagName('input');
+  const target = inputs[row * SIZE + col];
+  if (target && !target.disabled) {
+    target.focus();
+  }
+}
+
 function createBoardElement() {
   const boardDiv = document.getElementById('sudoku-board');
+  boardDiv.setAttribute('role', 'grid');
+  boardDiv.setAttribute('aria-rowcount', String(SIZE));
+  boardDiv.setAttribute('aria-colcount', String(SIZE));
   boardDiv.innerHTML = '';
   for (let i = 0; i < SIZE; i++) {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'sudoku-row';
+    rowDiv.setAttribute('role', 'row');
     for (let j = 0; j < SIZE; j++) {
       const input = document.createElement('input');
       input.type = 'text';
@@ -100,11 +116,33 @@ function createBoardElement() {
       input.className = 'sudoku-cell';
       input.dataset.row = i;
       input.dataset.col = j;
+      input.setAttribute('aria-label', `Row ${i + 1}, Column ${j + 1}`);
+      input.setAttribute('aria-invalid', 'false');
+      input.setAttribute('inputmode', 'numeric');
+      input.setAttribute('pattern', '[1-9]');
+      input.setAttribute('role', 'gridcell');
       input.addEventListener('input', (e) => {
         const val = e.target.value.replace(/[^1-9]/g, '');
         e.target.value = val;
         e.target.classList.remove('incorrect');
         updateImmediateValidation();
+      });
+      input.addEventListener('keydown', (e) => {
+        const row = Number(input.dataset.row);
+        const col = Number(input.dataset.col);
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          focusCell(row - 1, col);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          focusCell(row + 1, col);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          focusCell(row, col - 1);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          focusCell(row, col + 1);
+        }
       });
       rowDiv.appendChild(input);
     }
@@ -126,10 +164,12 @@ function renderPuzzle(puz) {
       if (val !== 0) {
         inp.value = val;
         inp.disabled = true;
+        inp.setAttribute('aria-readonly', 'true');
         inp.classList.add('prefilled');
       } else {
         inp.value = '';
         inp.disabled = false;
+        inp.setAttribute('aria-readonly', 'false');
       }
     }
   }
@@ -217,8 +257,18 @@ async function submitTime() {
   if (timeSubmitted) return;
 
   const nameInput = document.getElementById('player-name');
-  const playerName = nameInput && nameInput.value.trim() ? nameInput.value.trim() : 'Anonymous';
+  let playerName = nameInput && nameInput.value.trim() ? nameInput.value.trim() : '';
   const msg = document.getElementById('message');
+
+  if (!playerName) {
+    const promptedName = window.prompt('🎉 Congratulations! Enter your name for the fastest-times board:', '');
+    if (promptedName && promptedName.trim()) {
+      playerName = promptedName.trim().slice(0, 20);
+      if (nameInput) nameInput.value = playerName;
+    } else {
+      playerName = 'Anonymous';
+    }
+  }
 
   const res = await fetch('/submit-time', {
     method: 'POST',
@@ -243,7 +293,7 @@ async function submitTime() {
   timeSubmitted = true;
   stopTimer();
   msg.style.color = '#388e3c';
-  msg.innerText = `Solved in ${Number(data.entry.time_seconds).toFixed(1)}s!`;
+  msg.innerText = `🎉 Congratulations, ${data.entry.name}! You solved it in ${Number(data.entry.time_seconds).toFixed(1)}s (hints: ${data.entry.hints_used}).`;
   renderTimes(data.times || []);
 }
 
