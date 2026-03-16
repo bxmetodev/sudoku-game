@@ -6,13 +6,28 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+  <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
   <h1>Sudoku Game</h1>
   <div id="sudoku-board"></div>
+  <div class="difficulty">
+    <span class="difficulty-label">Difficulty:</span>
+    <button class="diff-btn active" data-clues="46">Easy</button>
+    <button class="diff-btn" data-clues="32">Medium</button>
+    <button class="diff-btn" data-clues="22">Hard</button>
+  </div>
   <div class="controls">
     <button id="new-game">New Game</button>
+    <button id="hint">Hint</button>
     <button id="check-solution">Check Solution</button>
+    <input id="player-name" type="text" maxlength="20" placeholder="Your name">
+    <span id="timer" class="timer">Time: 00:00</span>
     <span id="message"></span>
   </div>
+
+  <section class="scoreboard">
+    <h2>Top 10 Fastest Times</h2>
+    <ol id="times-list"></ol>
+  </section>
   <script src="/static/main.js"></script>
 </body>
 </html>

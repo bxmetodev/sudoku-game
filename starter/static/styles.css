@@ -1,22 +1,62 @@
+:root {
+    --bg: #f4f4f4;
+    --surface: #fff;
+    --surface-alt: #fafafa;
+    --text: #333;
+    --border: #bbb;
+    --border-strong: #333;
+    --prefilled-bg: #e0e0e0;
+    --prefilled-text: #333;
+    --focus-bg: #e0f7fa;
+    --incorrect-bg: #ffcdd2;
+    --invalid-move-bg: #ffe0b2;
+    --btn-bg: #1976d2;
+    --btn-hover: #1565c0;
+    --shadow: rgba(0,0,0,0.1);
+    --toggle-bg: #1976d2;
+    --toggle-text: #fff;
+}
+
+[data-theme="dark"] {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --surface-alt: #2a2a2a;
+    --text: #e0e0e0;
+    --border: #444;
+    --border-strong: #aaa;
+    --prefilled-bg: #333;
+    --prefilled-text: #ccc;
+    --focus-bg: #01579b;
+    --incorrect-bg: #b71c1c;
+    --invalid-move-bg: #8d6e63;
+    --btn-bg: #1565c0;
+    --btn-hover: #0d47a1;
+    --shadow: rgba(0,0,0,0.5);
+    --toggle-bg: #fdd835;
+    --toggle-text: #121212;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background: #f4f4f4;
+    background: var(--bg);
+    color: var(--text);
     text-align: center;
     margin: 0;
     padding: 0;
+    transition: background 0.3s, color 0.3s;
 }
 
 h1 {
     margin-top: 30px;
-    color: #333;
+    color: var(--text);
 }
 
 #sudoku-board {
     display: inline-block;
     margin: 30px auto;
-    border: 4px solid #333;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 4px solid var(--border-strong);
+    background: var(--surface);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .sudoku-row {
@@ -26,40 +66,85 @@ h1 {
 .sudoku-cell {
     width: 40px;
     height: 40px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--border);
     text-align: center;
     font-size: 20px;
     outline: none;
-    background: #fafafa;
-    transition: background 0.2s;
+    background: var(--surface-alt);
+    color: var(--text);
+    transition: background 0.2s, color 0.2s;
 }
 
 .sudoku-cell:focus {
-    background: #e0f7fa;
+    background: var(--focus-bg);
 }
 
 .sudoku-cell.prefilled {
-    background: #e0e0e0;
+    background: var(--prefilled-bg);
     font-weight: bold;
-    color: #333;
+    color: var(--prefilled-text);
 }
 
 .sudoku-cell.incorrect {
-    background: #ffcdd2;
+    background: var(--incorrect-bg);
+}
+
+.sudoku-cell.invalid-move {
+    background: var(--invalid-move-bg);
 }
 
 .sudoku-cell:nth-child(3),
 .sudoku-cell:nth-child(6) {
-    border-right: 3px solid #333;
+    border-right: 3px solid var(--border-strong);
 }
 
 .sudoku-row:nth-child(3) .sudoku-cell,
 .sudoku-row:nth-child(6) .sudoku-cell {
-    border-bottom: 3px solid #333;
+    border-bottom: 3px solid var(--border-strong);
+}
+
+.difficulty {
+    margin: 16px auto 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.difficulty-label {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.diff-btn {
+    padding: 6px 16px;
+    font-size: 14px;
+    border: 2px solid var(--btn-bg);
+    background: transparent;
+    color: var(--btn-bg);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.diff-btn:hover {
+    background: var(--btn-bg);
+    color: #fff;
+}
+
+.diff-btn.active {
+    background: var(--btn-bg);
+    color: #fff;
 }
 
 .controls {
     margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 button {
@@ -67,7 +152,7 @@ button {
     margin: 0 8px;
     font-size: 16px;
     border: none;
-    background: #1976d2;
+    background: var(--btn-bg);
     color: #fff;
     border-radius: 4px;
     cursor: pointer;
@@ -75,11 +160,67 @@ button {
 }
 
 button:hover {
-    background: #1565c0;
+    background: var(--btn-hover);
+}
+
+#theme-toggle {
+    background: var(--toggle-bg);
+    color: var(--toggle-text);
+    font-size: 18px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
 }
 
 #message {
-    margin-left: 20px;
+    margin-left: 10px;
     font-size: 16px;
     color: #d32f2f;
+}
+
+.timer {
+    min-width: 110px;
+    font-weight: bold;
+    color: var(--text);
+}
+
+#player-name {
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text);
+}
+
+.scoreboard {
+    width: min(460px, 92%);
+    margin: 24px auto 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow);
+    padding: 14px 20px;
+    text-align: left;
+}
+
+.scoreboard h2 {
+    margin: 4px 0 10px;
+    font-size: 20px;
+    color: var(--text);
+}
+
+#times-list {
+    margin: 0;
+    padding-left: 22px;
+}
+
+#times-list li {
+    margin: 6px 0;
+    color: var(--text);
 }
